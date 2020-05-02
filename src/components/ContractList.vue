@@ -1,15 +1,24 @@
 <template>
   <div>
-    <div class="contract-header">合约列表({{contracts.length}})</div>
+    <div class="contract-header">合约列表({{ contracts.length }})</div>
     <ul class="contract-list">
-      <li v-for="contract in contracts" :key="contract.contract"><router-link :to='{
-        name:"viewer", 
-        params:{
-          contract: contract.contract
-        }}'>{{contract.name}}</router-link></li>
+      <li v-for="contract in contracts" :key="contract.contract">
+        <router-link
+          :to="{
+            name: 'viewer',
+            params: {
+              contract: contract.contract
+            }
+          }"
+          >{{ contract.name }}</router-link
+        >
+      </li>
     </ul>
     <div class="contract-header">合约使用规范</div>
-    <pre class="contract-readme" v-html="`
+    <pre
+      class="contract-readme"
+      v-html="
+        `
 import {Contract, Service, Action, Struct, Field, Enum} from 'savml'
 
 export default class SContract implements Contract {
@@ -121,7 +130,9 @@ export default class SContract implements Contract {
     }
   ]
 }
-`"></pre>
+`
+      "
+    ></pre>
   </div>
 </template>
 <script lang="ts">
@@ -130,29 +141,28 @@ import { Component, Provide, Vue, Prop } from "vue-property-decorator";
 @Component
 export default class ContractList extends Vue {
   @Prop()
-  private contracts!: object[]
-  private contract: string = ''
+  private contracts!: object[];
+  private contract: string = "";
   jumpContract() {
-    this.$emit('jump', this.contract)
+    this.$emit("jump", this.contract);
   }
 }
-
 </script>
 <style lang="scss">
-  .contract-header {
-    margin: 20px;
+.contract-header {
+  margin: 20px;
+  color: #4f5959;
+  font-weight: 200;
+}
+.contract-list {
+  list-style-type: none;
+  a {
     color: #4f5959;
-    font-weight: 200;
+    text-decoration: none;
+    cursor: pointer;
   }
-  .contract-list {
-    list-style-type: none;
-    a {
-      color: #4f5959;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  }
-  .contract-readme {
-    margin: 10px;
-  }
+}
+.contract-readme {
+  margin: 10px;
+}
 </style>

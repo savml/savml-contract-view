@@ -3,7 +3,7 @@ declare module "*.vue" {
   export default Vue;
 }
 
-declare module 'heyui' {
+declare module "heyui" {
   const HeyUI: any;
   export default HeyUI;
 }
