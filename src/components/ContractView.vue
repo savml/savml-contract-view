@@ -175,26 +175,33 @@
       </ul>
     </div>
     <div class="contract-content">
-      <button
-        style="width: 30px;
+      <div>
+        <router-link style="width: 30px;
     height: 30px;
-    border-radius: 50px;"
-        @click="hideNav = !hideNav"
-        title="显示隐藏侧边栏"
-      >
-        {{ hideNav ? "&gt;" : "&lt;" }}
-      </button>
-      <button
-        style="position: fixed;
-    bottom: 100px;
-    right: 50px;
-    font-size: 36px;
-    background: transparent;
-    border: 0;"
-        @click="scrollTop"
-      >
-        ⬆️
-      </button>
+    display: inline-block;
+    text-align: center;
+    border: 1px solid gray;
+    border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+    border-radius: 20px;" to="/">🏠</router-link>
+        <button
+          style="margin-left: 10px; width: 32px; height: 32px; border-radius: 50px;"
+          @click="hideNav = !hideNav"
+          title="显示隐藏侧边栏"
+          >
+            {{ hideNav ? "&gt;" : "&lt;" }}
+          </button>
+        <button
+          style="position: fixed;
+      bottom: 100px;
+      right: 50px;
+      font-size: 36px;
+      background: transparent;
+      border: 0;"
+          @click="scrollTop"
+        >
+          ⬆️
+        </button>
+      </div>
       <!-- 服务列表 -->
       <section class="section-item" v-if="contract.services.length">
         <h3 class="section-title">服务列表</h3>
