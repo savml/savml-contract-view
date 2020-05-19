@@ -361,6 +361,7 @@
               <table class="table">
                 <tr>
                   <th width="100">错误代码</th>
+                  <th width="250">错误描述</th>
                   <th width="250">中文</th>
                   <th width="250">英文</th>
                 </tr>
@@ -370,6 +371,7 @@
                       {{ errorCode.code }}
                     </a>
                   </td>
+                  <td>{{ errorCode.message }}</td>
                   <td>{{ errorCode.cn }}</td>
                   <td>{{ errorCode.en }}</td>
                 </tr>
