@@ -15,8 +15,7 @@ router.get(
     ctx.body = html
       .replace("unpkg_url", process.env.UNPKG_URL)
       .replace("verdaccio_url", process.env.VERDACCIO_URL)
-      .replace("pkg_prefix", process.env.PKG_PREFIX)
-      ;
+      .replace("pkg_prefix", process.env.PKG_PREFIX);
   }
 );
 

@@ -1,7 +1,8 @@
 {
   "name": "savml-contract-view",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "scripts": {
+    "pub": "upv && npm run build && npm publish --registry https://registry.npmjs.org",
     "serve": "vue-cli-service serve --mode development",
     "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint"
@@ -27,7 +28,7 @@
     "node-sass": "^4.12.0",
     "prettier": "^1.18.2",
     "sass-loader": "^8.0.0",
-    "savml": "^1.0.56",
+    "savml": "^1.0.82",
     "typescript": "^3.4.3",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",

@@ -4,6 +4,7 @@
       @compare="compare"
       :contract="contract"
       :versions="versions"
+      :sidebarShowTitle="true"
       v-on:changeVersion="changeVersion"
     ></ContractView>
     <div class="compare-viewer" v-show="compareView">
@@ -71,19 +72,34 @@ export default class Viewer extends Vue {
       this.fetchContract(toParams.contract, toParams.version);
     }
   }
+  updateHash() {
+    if (this.$route.hash) {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          let dom = document.querySelector(`[href="${this.$route.hash}"]`);
+          // console.log(dom)
+          if (dom) {
+            (dom as any).click();
+          }
+        })
+      })
+    }
+  }
   async fetchVersions(contract: string) {
     let versions = await fetch(`${VERDACCIO_URL}/${contract}`)
       .then(res => res.json())
       .then(res => Object.keys(res.versions));
     this.versions = versions;
+    this.updateHash();
   }
   async fetchContract(contract: string, version: any) {
-    getFactory()
+    await getFactory()
       .getContextFactory()
       .context(contract, version || "latest")
       .then(res => {
         this.contract = res.contract();
       });
+    this.updateHash();
   }
   private versions: string[] = [];
   changeVersion(params: any) {

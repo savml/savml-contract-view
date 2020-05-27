@@ -47,10 +47,10 @@
           <template v-for="item in contract.dependencies">
             <li :key="item.package" class="menu-item">
               <a
-                v-bind:href="'/' + item.package + '/' + item.version"
+                v-bind:href="'/viewer/' + item.package + '/' + item.version"
                 class="sidebar-link"
               >
-                {{ item.package }}.{{ item.version }}
+                {{ item.package }}/{{ item.version }}
               </a>
             </li>
           </template>
@@ -124,33 +124,12 @@
         </li>
         <ul class="menu-sub">
           <template v-for="item in contract.pages">
-            <li :key="item.name" class="menu-item">
-              <a
-                class="sidebar-link"
-                v-bind:title="item.description || item.title || item.name"
-              >
-                {{ item.name }}
-                <i v-if="sidebarShowTitle && item.title">{{ item.title }}</i>
-                <i class="menu-badge">({{ item.views.length }})</i>
-              </a>
-              <ul class="menu-sub">
-                <template v-for="subitem in item.views">
-                  <li :key="subitem.name" class="menu-item">
-                    <a
-                      class="sidebar-link"
-                      v-bind:title="
-                        subitem.description || subitem.title || subitem.name
-                      "
-                    >
-                      {{ subitem.name }}
-                      <i v-if="sidebarShowTitle && subitem.title">{{
-                        subitem.title
-                      }}</i>
-                    </a>
-                  </li>
-                </template>
-              </ul>
-            </li>
+            <MenuItem
+              :key="item.name"
+              :getUrl="getViewUrl"
+              :subitem="item"
+              :sidebarShowTitle="sidebarShowTitle"
+            />
           </template>
         </ul>
         <!-- 错误代码 -->
@@ -176,20 +155,24 @@
     </div>
     <div class="contract-content">
       <div>
-        <router-link style="width: 30px;
+        <router-link
+          style="width: 30px;
     height: 30px;
     display: inline-block;
     text-align: center;
     border: 1px solid gray;
     border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
-    border-radius: 20px;" to="/">🏠</router-link>
+    border-radius: 20px;"
+          to="/"
+          >🏠</router-link
+        >
         <button
           style="margin-left: 10px; width: 32px; height: 32px; border-radius: 50px;"
           @click="hideNav = !hideNav"
           title="显示隐藏侧边栏"
-          >
-            {{ hideNav ? "&gt;" : "&lt;" }}
-          </button>
+        >
+          {{ hideNav ? "&gt;" : "&lt;" }}
+        </button>
         <button
           style="position: fixed;
       bottom: 100px;
@@ -234,6 +217,7 @@
                   <tr>
                     <th>名称</th>
                     <th>方法</th>
+                    <th>认证</th>
                     <th>路径</th>
                     <th>输入</th>
                     <th>输出</th>
@@ -247,6 +231,7 @@
                       {{ action.name }}
                     </td>
                     <td>{{ action.method || "POST" }}</td>
+                    <td>{{ authMaps[action.auth] || action.auth || "" }}</td>
                     <td>{{ getActionPath(action, service) }}</td>
                     <td>
                       <a
@@ -270,6 +255,127 @@
                         }}</a>
                       </div>
                     </td>
+                  </tr>
+                </table>
+              </dd>
+            </dl>
+          </section>
+        </template>
+      </section>
+      <!-- 页面视图 -->
+      <section v-if="pageViews.length">
+        <h3 class="section-title">页面视图</h3>
+        <template v-for="view in pageViews">
+          <section
+            class="section-detail"
+            :key="view.name"
+            v-bind:id="'views.' + view.name"
+          >
+            <h4 class="section-title">
+              {{ view.name
+              }}<span class="hash-link" @click="toHash('#views.' + view.name)"
+                >#</span
+              >
+            </h4>
+            <dl class="kv-item">
+              <dt>标题</dt>
+              <dd>
+                {{ view.title }}
+                <i v-if="view.popup">(弹窗)</i>
+              </dd>
+            </dl>
+            <dl class="kv-item">
+              <dt>描述</dt>
+              <dd>{{ view.description }}</dd>
+            </dl>
+            <dl class="kv-item" v-if="view.views && view.views.length">
+              <dt>页面</dt>
+              <dd>
+                <table class="table">
+                  <tr>
+                    <th width="250">名称</th>
+                    <th width="250">弹窗</th>
+                    <th width="200">标题</th>
+                    <th>描述</th>
+                  </tr>
+                  <tr v-for="subView in view.views" :key="subView.name">
+                    <td>
+                      <a :href="'#views.' + subView.name">
+                        {{ subView.name }}
+                      </a>
+                    </td>
+                    <td>{{ !!subView.popup }}</td>
+                    <td>{{ subView.title }}</td>
+                    <td>{{ subView.description }}</td>
+                  </tr>
+                </table>
+              </dd>
+            </dl>
+            <dl
+              class="kv-item"
+              v-if="view.permissions && view.permissions.length"
+            >
+              <dt>接口</dt>
+              <dd>
+                <table class="table">
+                  <tr>
+                    <th width="250">接口名称</th>
+                    <th width="250">合约名称</th>
+                    <th>合约版本</th>
+                  </tr>
+                  <tr
+                    v-for="permission in view.permissions"
+                    :key="permission.value"
+                  >
+                    <td>
+                      <a :href="getPermissionDep(permission.value).href">{{permission.value}}</a>
+                    </td>
+                    <td>
+                      {{ getPermissionDep(permission.value).dep.package }}
+                    </td>
+                    <td>
+                      {{ getPermissionDep(permission.value).dep.version }}
+                    </td>
+                  </tr>
+                </table>
+              </dd>
+            </dl>
+            <dl
+              class="kv-item"
+              v-if="view.permissions && view.permissions.length"
+            >
+            <dt>权限</dt>
+              <dd>
+                <table class="table">
+                  <tr>
+                    <th width="250">权限名称</th>
+                    <th width="250">权限标题</th>
+                    <th width="250">权限描述</th>
+                    <th width="250">依赖接口</th>
+                    <th>选项设置</th>
+                  </tr>
+                  <tr
+                    v-for="permission in view.permissionNodes" 
+                    :key="permission.key"
+                  >
+                    <td>
+                      {{permission.key}}
+                    </td>
+                    <td>
+                      {{permission.title}}
+                    </td>
+                    <td>
+                      {{permission.description}}
+                    </td>
+                    <td>
+                      <ul style="margin: 0; padding: 0; list-style-type: decimal;" v-if="permission.nodes.length">
+                        <li
+                          v-for="node in permission.nodes" 
+                          :key="node.value"
+                        ><a :href="getPermissionDep(node.value).href">{{node.value}}</a></li>
+                      </ul>
+                    </td>
+                    <td><pre>{{permission.options}}</pre></td>
                   </tr>
                 </table>
               </dd>
@@ -385,6 +491,7 @@
 </template>
 
 <script lang="ts">
+import MenuItem from "./MenuItem.vue";
 import { TContract, TField } from "savml";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
@@ -409,12 +516,21 @@ const simpleTypes = [
   "uint64"
 ];
 
-@Component
+@Component({
+  components: {
+    MenuItem
+  }
+})
 export default class ContractView extends Vue {
   @Prop() private contract!: TContract;
   @Prop() private versions!: string[];
   @Prop() sidebarShowTitle?: boolean;
   private compareVersion: string = "";
+  private authMaps: any = {
+    0: "游客",
+    1: "登录",
+    2: "角色"
+  };
   private hideNav: boolean = false;
   get infos() {
     let that: any = this;
@@ -508,6 +624,43 @@ export default class ContractView extends Vue {
       version: this.contract.version,
       compareVersion: this.compareVersion
     });
+  }
+  getViewUrl(view: any) {
+    return `#views.${view.name}`;
+  }
+  get pageViews() {
+    let arr: any = [];
+    let process = (pageView: any, isPage: boolean) => {
+      pageView.isPage = isPage;
+      arr.push(pageView);
+      if (pageView.views && pageView.views.length) {
+        pageView.views.forEach((view: any) => {
+          process(view, false);
+        });
+      }
+    };
+    this.contract.pages.forEach(page => {
+      process(page, true);
+    });
+    return arr;
+  }
+  getPermissionDep(text: string) {
+    let [alias, path] = text.split("@");
+    let dep: any = this.contract.dependencies
+      .filter(dep => {
+        if (dep.name === alias) {
+          return dep;
+        }
+        if (dep.package === alias) {
+          return dep;
+        }
+      })
+      .shift();
+    return {
+      dep,
+      path,
+      href: `/viewer/${dep.package}/${dep.version}/#services.${path}`
+    };
   }
 }
 </script>
