@@ -1,6 +1,6 @@
 {
   "name": "savml-contract-view",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "scripts": {
     "pub": "upv && npm run build && npm publish --registry https://registry.npmjs.org",
     "serve": "vue-cli-service serve --mode development",
