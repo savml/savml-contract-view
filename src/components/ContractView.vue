@@ -218,6 +218,7 @@
                     <th>名称</th>
                     <th>方法</th>
                     <th>认证</th>
+                    <th>加密方式</th>
                     <th>路径</th>
                     <th>输入</th>
                     <th>输出</th>
@@ -232,6 +233,7 @@
                     </td>
                     <td>{{ action.method || "POST" }}</td>
                     <td>{{ authMaps[action.auth] || action.auth || "" }}</td>
+                    <td><span :class="{special: action.encrypt}">{{ action.encrypt || '' }}</span></td>
                     <td>{{ getActionPath(action, service) }}</td>
                     <td>
                       <a
@@ -417,8 +419,9 @@
                 >
                   <tr>
                     <th width="250">名称</th>
-                    <th width="250">类型</th>
+                    <th width="150">类型</th>
                     <th width="50">必须</th>
+                    <th width="50">脱敏</th>
                     <th>标题</th>
                     <th>描述</th>
                   </tr>
@@ -433,6 +436,7 @@
                       <span v-else>{{ field.type }}</span>
                     </td>
                     <td>{{ !field.optional }}</td>
+                    <td><span :class="{special: field.sensitive}">{{ field.sensitive || '' }}</span></td>
                     <td>{{ field.title }}</td>
                     <td>{{ field.description }}</td>
                   </tr>
@@ -794,4 +798,12 @@ export default class ContractView extends Vue {
   margin-top: 10px;
   padding: 5px 5px;
 }
+
+.special {
+  color: #c7254e;
+  background-color: #f7e5ea;
+  border-radius: 2px;
+  padding: 2px;
+}
+
 </style>
